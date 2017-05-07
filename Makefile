@@ -22,7 +22,7 @@ tokens/init.tkn:
 	touch $@
 
 # perform migration if necessary
-migrate:
+migration:
 	python3 manage.py makemigrations
 	python3 manage.py migrate
 
