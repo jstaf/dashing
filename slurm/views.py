@@ -2,5 +2,6 @@ from django.shortcuts import render
 from django.http import HttpResponse
 
 def index(request):
-    return HttpResponse("testing testing...")
+    context = {}
+    return render(request, 'slurm/index.html', context)
 
