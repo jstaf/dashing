@@ -11,9 +11,20 @@ class PyslurmApiTest(TestCase):
         self.assertIs(psapi.ping_controllers(), True)
 
 
-    def test_ping_controllers_dead(self):
+
+class ControllersAreDeadTest(TestCase):
+
+    @classmethod
+    def setUpClass(self):
         os.system('killall slurmctld')  # aaaahhhh
+
+
+    @classmethod
+    def tearDownClass(self):
+        os.system('slurmctld')
+        time.sleep(10)  # give slurmctld time to restart
+
+
+    def test_ping_controllers_dead(self):
         self.assertIs(psapi.ping_controllers(), False)
-        os.system('slurmctld &')
-        time.sleep(5)  # give slurmctl 5 seconds to restart
 
