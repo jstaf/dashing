@@ -23,7 +23,6 @@ def get_list(data, attr):
     return [v[attr] for v in data.values()]
 
 
-
 def to_unicode(bytes_dict):
     """
     Recursively convert a dictionary to unicode
@@ -58,23 +57,30 @@ def left_pad(string, digits, char='0'):
     return char * (digits - len(string)) + string
 
 
-def nodes():
+def pyslurm_get(expr):
+    """
+    A wrapper function to safely handle pyslurm calls in event of controller failure
+    """
     try:
-        return to_unicode(pyslurm.node().get())
+        return(to_unicode(expr))
     except:
-        return {}  # controllers are DOWN
+        return {} 
+
+
+def nodes():
+    return pyslurm_get(pyslurm.node().get())
 
 
 def jobs():
-    return to_unicode(pyslurm.job().get())
+    return pyslurm_get(pyslurm.jobs().get())
 
     
 def config():
-    return to_unicode(pyslurm.config().get())
+    return pyslurm_get(pyslurm.config().get())
 
 
-def get_partition():
-    return to_unicode(pyslurm.partition().get())
+def partitions():
+    return pyslurm_get(pyslurm.config().get())
 
 
 def has_backup_controller():
