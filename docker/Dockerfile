@@ -16,12 +16,9 @@ RUN cd ~ \
 	&& python3 setup.py build \
 	&& python3 setup.py install
     
-# install dashing
-RUN git clone https://github.com/jstaf/dashing.git \
-	&& cd dashing \
-	&& python3 manage.py runserver &
-
+# install dashing and serve over port 8000
+RUN cd ~ \
+	&& git clone https://github.com/jstaf/dashing.git
 EXPOSE 8000/tcp
-
-CMD ["/bin/bash"]
+CMD ["/usr/bin/python3", "/root/dashing/manage.py", "runserver", "0.0.0.0:8000"]
 
