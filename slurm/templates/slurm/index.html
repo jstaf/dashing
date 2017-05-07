@@ -5,5 +5,11 @@
 {% bootstrap_css %}
 {% bootstrap_javascript %}
 
-<p>hello world</p>
+{% if controllers_up %}
+<p>Controller Status -- UP</p>
+{% else %}
+<p>Controller Status -- DOWN</p>
+{% endif %}
+
+<p>{{ nodes_reporting }} of {{ total_nodes }} nodes reporting.</p>
 

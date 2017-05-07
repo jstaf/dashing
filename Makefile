@@ -23,8 +23,8 @@ tokens/init.tkn:
 
 # perform migration if necessary
 migration:
-	python3 manage.py makemigrations
-	python3 manage.py migrate
+	docker exec -it $(shell docker ps | awk '$$2 == "dashing"     {print $$1}') python3 /root/dashing/manage.py makemigrations
+	docker exec -it $(shell docker ps | awk '$$2 == "dashing"     {print $$1}') python3 /root/dashing/manage.py migrate
 
 # build docker container
 tokens/docker_image.tkn: docker/Dockerfile 

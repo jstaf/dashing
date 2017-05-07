@@ -58,15 +58,18 @@ def left_pad(string, digits, char='0'):
     return char * (digits - len(string)) + string
 
 
-def get_nodes():
-    return to_unicode(pyslurm.node().get())
+def nodes():
+    try:
+        return to_unicode(pyslurm.node().get())
+    except:
+        return {}  # controllers are DOWN
 
 
-def get_jobs():
+def jobs():
     return to_unicode(pyslurm.job().get())
 
     
-def get_config():
+def config():
     return to_unicode(pyslurm.config().get())
 
 
@@ -76,7 +79,7 @@ def get_partition():
 
 def has_backup_controller():
     """Is there a secondary slurmctld node?"""
-    config = get_config()
+    config = config()
     return config['backup_addr'] is not None or \
             config['backup_controller'] is not None
 
@@ -105,25 +108,28 @@ def remove_down(nodes):
 
 
 def nodes_reporting():
-    return len(remove_down(get_nodes()))
+    try:
+        return len(remove_down(nodes()))
+    except:
+        return 0
     
 
 def total_nodes():
-    return len(get_nodes())
+    return len(nodes())
 
 
 def total_cpus(include_down = False):
-    nodes = get_nodes()
+    nodes = nodes()
     if not include_down:
         nodes = remove_down(nodes)
     return sum(get_list(nodes, 'cpus'))
     
 
 def alloc_cpus():
-    return sum(get_list(get_nodes(), 'alloc_cpus'))
+    return sum(get_list(nodes(), 'alloc_cpus'))
 
 
 def total_jobs():
-    return len(get_jobs())
+    return len(jobs())
 
 
