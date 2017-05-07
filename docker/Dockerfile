@@ -1,5 +1,5 @@
-# run with:
-# docker run -h ernie -p 8000:8000 -it dashing
+# run with (from project root):
+# docker run -h ernie -p 8000:8000 -v$(pwd):/root/dashing -it dashing  
 
 FROM giovtorres/docker-centos7-slurm:latest
 MAINTAINER Jeff Stafford <jeff.stafford@queensu.ca>
@@ -16,9 +16,7 @@ RUN cd ~ \
 	&& python3 setup.py build \
 	&& python3 setup.py install
     
-# install dashing and serve over port 8000
-RUN cd ~ \
-	&& git clone https://github.com/jstaf/dashing.git
 EXPOSE 8000/tcp
+
 CMD ["/usr/bin/python3", "/root/dashing/manage.py", "runserver", "0.0.0.0:8000"]
 
