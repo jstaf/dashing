@@ -9,3 +9,6 @@ def index(request):
             'total_nodes': psapi.total_nodes()}
     return render(request, 'slurm/index.html', context)
 
+def nodes(request):
+    return HttpResponse('there is a page here now')
+
