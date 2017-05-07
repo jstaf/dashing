@@ -72,14 +72,28 @@ def get_config():
 
 def get_partition():
     return to_unicode(pyslurm.partition().get())
-    
+
+
+def has_backup_controller():
+    """Is there a secondary slurmctld node?"""
+    config = get_config()
+    return config['backup_addr'] is not None or \
+            config['backup_controller'] is not None
+
     
 def ping_controllers():
-    """
-    Returns a two-element tuple of whether or not the primary/backup slurm 
-    controllers are live.
-    """
-    return (pyslurm.slurm_ping(1) == 0, pyslurm.slurm_ping(2) == 0)
+    """Returns True if any slurmctld is alive"""
+
+    # why can't this function just return false if it fails???
+    try:
+        pyslurm.slurm_ping(1)
+        return True
+    except:
+        try:
+            pyslurm.slurm_ping(2)
+            return True
+        except:
+            return False
 
 
 def remove_down(nodes):

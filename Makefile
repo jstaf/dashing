@@ -1,4 +1,4 @@
-.PHONY = run, shell, migrate
+.PHONY = run, shell, migrate, test
 
 # run docker container
 run: tokens/docker_image.tkn tokens/init.tkn
@@ -7,6 +7,10 @@ run: tokens/docker_image.tkn tokens/init.tkn
 # attach to running docker container
 shell:
 	docker exec -it $(shell docker ps | awk '$$2 == "dashing" {print $$1}') bash
+
+# run automated tests using docker container
+test:
+	docker exec -it $(shell docker ps | awk '$$2 == "dashing"     {print $$1}') python3 /root/dashing/manage.py test slurm
 
 # run all commands necessary to intialize django
 init: tokens/init.tkn
