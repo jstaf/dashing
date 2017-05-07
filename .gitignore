@@ -1,5 +1,5 @@
 __pycache__/
-*.token
+*.tkn
 *.swp
 *~
 db.sqlite3
