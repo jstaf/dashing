@@ -2,7 +2,23 @@
 {% bootstrap_css %}
 {% bootstrap_javascript %}
 
-<h1>Nodes</h1>
+{% include "slurm/navbar.html" %}
 
-
+<div class=container>
+	<h1>Nodes</h1>
+	<table class="table table-hover">
+		<thead>
+			<th>Name</th>
+			<th>State</th>
+		</thead>
+		<tbody>
+			{% for node in object_list %}
+				<tr>
+					<td>{{node.hostname}}</td>
+					<td>{{node.state}}</td>
+				</tr>
+			{% endfor %}
+		</tbody>
+	</table>
+</div>
 

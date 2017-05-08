@@ -14,7 +14,6 @@ def index(request):
 
 class NodeView(generic.ListView):
     model = Node
-#    datatable_options = {'structure_template': 'datatableview/bootstrap_structure.html'}
 
 
 def nodes(request):
