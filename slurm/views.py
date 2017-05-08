@@ -12,13 +12,12 @@ def index(request):
     return render(request, 'slurm/index.html', context)
 
 
-class NodeView(generic.ListView):
-    model = Node
-
-
 def nodes(request):
     update_nodes()
-    return HttpResponse(Node.objects.all())
+    nodes = Node.objects.order_by('pk')
+    fields = [field.name for field in Node._meta.get_fields()]
+    return render(request, 'slurm/node_list.html',
+            {'fields': fields, 'nodes': nodes })
 
 
 def update_nodes():

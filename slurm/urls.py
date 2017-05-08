@@ -4,6 +4,6 @@ from . import views
 
 urlpatterns = [
     url(r'^$', views.index, name='index'),
-    url(r'^nodes$', views.NodeView.as_view(), name='nodes'),
+    url(r'^nodes$', views.nodes, name='nodes'),
 ]
 

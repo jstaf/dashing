@@ -8,14 +8,21 @@
 	<h1>Nodes</h1>
 	<table class="table table-hover">
 		<thead>
-			<th>Name</th>
-			<th>State</th>
+			{% for field in fields %}
+				<th>{{field}}</th>
+			{% endfor %}
 		</thead>
 		<tbody>
-			{% for node in object_list %}
+			{% for node in nodes %}
 				<tr>
+					{# TODO find a way to iterate through these later #}
 					<td>{{node.hostname}}</td>
 					<td>{{node.state}}</td>
+					<td>{{node.cpus}}</td>
+					<td>{{node.alloc_cpus}}</td>
+					<td>{{node.real_mem}}</td>
+					<td>{{node.alloc_mem}}</td>
+					<td>{{node.tmp_disk}}</td>
 				</tr>
 			{% endfor %}
 		</tbody>
