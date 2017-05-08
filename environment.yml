@@ -15,7 +15,9 @@ dependencies:
 - zlib=1.2.8=3
 - pip:
   - django-bootstrap3==8.2.3
+  - python-dateutil==2.6.0
   - requests==2.13.0
+  - six==1.10.0
   - snakemake==3.11.2
   - wrapt==1.10.10
 prefix: /opt/anaconda3/envs/dashing

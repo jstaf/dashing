@@ -15,8 +15,10 @@ RUN cd ~ \
 	&& cd pyslurm \
 	&& python3 setup.py build \
 	&& python3 setup.py install
-    
+   
 EXPOSE 8000/tcp
+
+WORKDIR '/root/dashing'
 
 CMD ["/usr/bin/python3", "/root/dashing/manage.py", "runserver", "0.0.0.0:8000"]
 

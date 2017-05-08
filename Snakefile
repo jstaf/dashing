@@ -12,7 +12,7 @@ def docker_run(command):
 # run docker container
 rule run:
 	input: 	'tokens/docker_image.tkn', 'tokens/init.tkn'
-	shell: 	'docker run -h ernie -p 8000:8000 -v $(pwd):/root/dashing -it dashing'
+	shell: 	'docker run -h ernie -p 8000:8000 -v $(pwd):%s -it dashing' % DASHING_LOC
 
 
 # attach to running docker container
@@ -21,10 +21,16 @@ rule shell:
 		docker_run('bash')
 
 
+# start an ipython shell in the container
+rule pyshell:
+	run:
+		docker_run('ipython')
+
+
 # run unit tests
 rule test:
 	run: 	
-		docker_run('python3 %s/manage.py test slurm' % DASHING_LOC)
+		docker_run('python3 manage.py test slurm')
 
 
 # perform any initialization that needs to happen
@@ -40,8 +46,8 @@ rule init:
 # perform db migration
 rule migrate:
 	run:
-		docker_run('python3 %s/manage.py makemigration' % DASHING_LOC)
-		docker_run('python3 %s/manage.py migrate' % DASHING_LOC)
+		docker_run('python3 manage.py makemigrations')
+		docker_run('python3 manage.py migrate')
 
 
 # build docker container

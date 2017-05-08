@@ -33,4 +33,6 @@ class Job(models.Model):
     cpus_per_node = models.IntegerField(default=1)
     mem_per_node = models.IntegerField()
 
+    def __str__(self):
+        return str(self.job_id)
 
