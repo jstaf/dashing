@@ -25,15 +25,13 @@ def update_nodes():
     Update node models
     """
     for node in psapi.nodes().values():
-        new_node = Node(
-                hostname=node['name'],
-                state=node['state'],
-                cpus=node['cpus'],
-                alloc_cpus=node['alloc_cpus'],
-                real_mem=node['real_memory'],
-                alloc_mem=node['alloc_mem'],
-                tmp_disk=node['tmp_disk'])
-        if new_node.pk not in Node.objects.all():
-            new_node.save()
-
+        new_vals = {
+                'state': node['state'],                
+                'cpus': node['cpus'],
+                'alloc_cpus': node['alloc_cpus'],
+                'real_mem': node['real_memory'],
+                'alloc_mem': node['alloc_mem'],
+                'tmp_disk': node['tmp_disk']}
+        new_node, created = Node.objects.update_or_create(
+                hostname=node['name'], defaults=new_vals)
 
