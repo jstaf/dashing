@@ -24,12 +24,12 @@ class Job(models.Model):
     name = models.CharField(max_length=50)
     command = models.CharField(max_length=100)
     submit_time = models.IntegerField()
-    start_time = models.IntegerField()  # end time can be calculated using time_limit
-    time_limit = models.IntegerField()
+    start_time = models.IntegerField(null=True)  # end time can be calculated using time_limit
+    time_limit = models.IntegerField(null=True)
 
     # job allocation details 
     # (allocation per node is assumed identical)
-    nodes = models.CharField(max_length=200)
+    nodes = models.CharField(max_length=100, null=True)
     cpus_per_node = models.IntegerField(default=1)
     mem_per_node = models.IntegerField()
 
