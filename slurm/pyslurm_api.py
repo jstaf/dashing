@@ -72,7 +72,7 @@ def nodes():
 
 
 def jobs():
-    return pyslurm_get(pyslurm.jobs().get())
+    return pyslurm_get(pyslurm.job().get())
 
     
 def config():
@@ -80,7 +80,7 @@ def config():
 
 
 def partitions():
-    return pyslurm_get(pyslurm.config().get())
+    return pyslurm_get(pyslurm.partition().get())
 
 
 def has_backup_controller():

@@ -13,17 +13,14 @@
 			{% endfor %}
 		</thead>
 		<tbody>
-			{% for node in nodes %}
-				<tr>
-					{# TODO find a way to iterate through these later #}
-					<td>{{node.hostname}}</td>
-					<td>{{node.state}}</td>
-					<td>{{node.cpus}}</td>
-					<td>{{node.alloc_cpus}}</td>
-					<td>{{node.real_mem}}</td>
-					<td>{{node.alloc_mem}}</td>
-					<td>{{node.tmp_disk}}</td>
-				</tr>
+			{% for node_field in node_data %}
+				{% if node_field == "!tr_start" %}
+					<tr>
+				{% elif node_field == "!tr_stop" %}
+					</tr>
+				{% else %}
+					<td>{{ node_field }}</td>
+				{% endif %}
 			{% endfor %}
 		</tbody>
 	</table>

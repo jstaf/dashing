@@ -24,7 +24,7 @@ rule shell:
 # start an ipython shell in the container
 rule pyshell:
 	run:
-		docker_run('ipython')
+		docker_run('python3 manage.py shell')
 
 
 # run unit tests
