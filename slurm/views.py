@@ -14,18 +14,18 @@ def index(request):
 
 def nodes(request):
     update_nodes()
-    fields = [field.name for field in Node._meta.get_fields()]
+    field_names = [field.name for field in Node._meta.get_fields()]
     
     # collapse everything to a really long list for use in django template (also, fuck me)
     nodes = Node.objects.order_by('pk').values_list()
-    node_data = []
+    field_data = []
     for node in nodes:
-        node_data.append('!tr_start')
-        node_data.extend(list(node))
-        node_data.append('!tr_stop')
+        field_data.append('!tr_start')
+        field_data.extend(list(node))
+        field_data.append('!tr_stop')
 
     return render(request, 'slurm/node_list.html',
-            {'fields': fields, 'num_fields': str(len(fields)), 'node_data': node_data })
+            {'field_names': field_names, 'field_data': field_data })
 
 
 def update_nodes():

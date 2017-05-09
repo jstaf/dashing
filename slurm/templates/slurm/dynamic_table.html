@@ -1,0 +1,19 @@
+<table class="table table-hover">
+	<thead>
+		{% for field in field_names %}
+			<th>{{field}}</th>
+		{% endfor %}
+	</thead>
+	<tbody>
+		{% for entry in field_data %}
+			{% if entry == "!tr_start" %}
+				<tr>
+			{% elif entry == "!tr_stop" %}
+				</tr>
+			{% else %}
+				<td>{{ entry }}</td>
+			{% endif %}
+		{% endfor %}
+	</tbody>
+</table>
+
