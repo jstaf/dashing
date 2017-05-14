@@ -48,8 +48,7 @@ def dynamic_table_link(queryset, redirect_path):
     model_data = queryset.values_list()
     table += '\t<tbody>\n'
     for row in model_data:
-        pk_id = str(row[pk_idx])
-        table += '\t\t<tr onclick=window.document.location="%s/%s">' % (redirect_path, pk_id)
+        table += '\t\t<tr onclick=window.document.location="%s/%s">' % (redirect_path, row[pk_idx])
         for element in row:
             table += '<td>%s</td>' % element
         table += '</tr>\n'

@@ -1,5 +1,5 @@
 from django.shortcuts import render
-from django.http import HttpResponse
+from django.http import HttpResponse, Http404
 from django.views import generic
 
 from .models import Node, Job
@@ -23,10 +23,18 @@ def nodes(request):
 
 def jobs(request):
     update_jobs()
-    table = dynamic_table_link(Job.objects.order_by('pk'), '/jobs')
+    table = dynamic_table_link(Job.objects.order_by('pk'), '/slurm/jobs')
     
     return render(request, 'slurm/data-table.html', 
             {'page_name': 'Job queue', 'dynamic_table': table})
+
+
+def job_page(request, job_id):
+    try:
+        deets = psapi.job_id(job_id)
+        return HttpResponse(deets)
+    except ValueError as e:
+        raise Http404("The specified job does not exist (it also may have completed).")
 
 
 def update_jobs():
