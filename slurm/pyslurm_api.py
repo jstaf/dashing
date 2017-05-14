@@ -74,6 +74,18 @@ def nodes():
 def jobs():
     return pyslurm_get(pyslurm.job().get())
 
+
+def job_id(jobid):
+    """
+    Find job based on its jobid.
+    Considerably faster than a call to jobs()
+    """
+    byteid = str(jobid).encode()
+    try:
+        return pyslurm_get(pyslurm.job().find_id(byteid))
+    except ValueError as e:
+        return {}
+
     
 def config():
     return pyslurm_get(pyslurm.config().get())

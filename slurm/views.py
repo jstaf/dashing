@@ -3,7 +3,7 @@ from django.http import HttpResponse
 from django.views import generic
 
 from .models import Node, Job
-from .dynamic_tables import dynamic_table
+from .dynamic_tables import dynamic_table, dynamic_table_link
 import slurm.pyslurm_api as psapi
 
 def index(request):
@@ -23,7 +23,7 @@ def nodes(request):
 
 def jobs(request):
     update_jobs()
-    table = dynamic_table(Job.objects.order_by('pk'))
+    table = dynamic_table_link(Job.objects.order_by('pk'), '/jobs')
     
     return render(request, 'slurm/data-table.html', 
             {'page_name': 'Job queue', 'dynamic_table': table})
