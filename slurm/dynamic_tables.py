@@ -3,6 +3,7 @@ A set of functions to generate complex HTML content as a
 single Django template variable
 """
 
+import re
 
 def dynamic_table(queryset):
     """
@@ -67,6 +68,8 @@ def dict_table(some_dict):
     table = '<table class="table">\n\t<thead>\n\t\t<th>key</th>\n\t\t<th>value</th>\n\t</thead>\n\t<tbody>'
     
     for key in sorted(some_dict.keys()):
+        if key == 'batch_script':
+            some_dict['batch_script'] = re.sub(r'\n', '<br>', some_dict['batch_script'])
         table += '<tr><td>%s</td><td>%s</td></tr>' % (key, some_dict[key])
 
     table += '\n\t</tbody>\n</table>'
