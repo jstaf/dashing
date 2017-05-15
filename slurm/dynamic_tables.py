@@ -12,6 +12,8 @@ def dynamic_table(queryset):
     """
     Generate a dynamic table to be served up as a single variable in template.
     """
+    if len(queryset) == 0:
+        return '<p>No data to display.</p>'
 
     model = queryset.model
     
@@ -39,6 +41,9 @@ def dynamic_table_link(queryset, redirect_path):
     """
     A dynamic table that links to a page with it's primary key
     """
+    if len(queryset) == 0:
+        return '<p>No data to display.</p>'
+
     model = queryset.model
     
     # table headers
