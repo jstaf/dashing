@@ -3,7 +3,7 @@ from django.http import HttpResponse, Http404
 from django.views import generic
 
 from .models import Node, Job
-from .dynamic_tables import dynamic_table, dynamic_table_link
+import slurm.dynamic_tables as dt
 import slurm.pyslurm_api as psapi
 
 def index(request):
@@ -15,7 +15,7 @@ def index(request):
 
 def nodes(request):
     update_nodes()
-    table = dynamic_table(Node.objects.order_by('pk'))
+    table = dt.dynamic_table(Node.objects.order_by('pk'))
 
     return render(request, 'slurm/data-table.html',
             {'page_name': 'Node status', 'dynamic_table': table})
@@ -23,17 +23,20 @@ def nodes(request):
 
 def jobs(request):
     update_jobs()
-    table = dynamic_table_link(Job.objects.order_by('pk'), '/slurm/jobs')
+    table = dt.dynamic_table_link(Job.objects.order_by('pk'), '/slurm/jobs')
     
     return render(request, 'slurm/data-table.html', 
             {'page_name': 'Job queue', 'dynamic_table': table})
 
 
 def job_page(request, job_id):
-    try:
-        deets = psapi.job_id(job_id)
-        return HttpResponse(deets)
-    except ValueError as e:
+    job_id = int(job_id)
+    deets = psapi.jobs(ids = job_id)
+    if len(deets) == 1:
+        table = dt.dict_table(deets[job_id])
+        return render(request, 'slurm/data-table.html',
+                {'page_name': 'Details for job {}'.format(job_id), 'dynamic_table': table})
+    else:
         raise Http404("The specified job does not exist (it also may have completed).")
 
 

@@ -1,8 +1,14 @@
 """
-Generate a dynamic table to be served up as a single variable in template.
+A set of functions to generate complex HTML content as a 
+single Django template variable
 """
 
+
 def dynamic_table(queryset):
+    """
+    Generate a dynamic table to be served up as a single variable in template.
+    """
+
     model = queryset.model
     
     # table headers
@@ -56,4 +62,14 @@ def dynamic_table_link(queryset, redirect_path):
     
     return table
     
+
+def dict_table(some_dict):
+    table = '<table class="table">\n\t<thead>\n\t\t<th>key</th>\n\t\t<th>value</th>\n\t</thead>\n\t<tbody>'
+    
+    for key in sorted(some_dict.keys()):
+        table += '<tr><td>%s</td><td>%s</td></tr>' % (key, some_dict[key])
+
+    table += '\n\t</tbody>\n</table>'
+    return table
+
 

@@ -23,6 +23,10 @@ def get_list(data, attr):
     return [v[attr] for v in data.values()]
 
 
+def convert_dict_values(dict_values):
+    return list(dict_values)[0]
+
+
 def to_unicode(bytes_dict):
     """
     Recursively convert a dictionary to unicode
@@ -71,17 +75,22 @@ def nodes():
     return pyslurm_get(pyslurm.node().get())
 
 
-def jobs():
-    return pyslurm_get(pyslurm.job().get())
-
-
-def job_id(jobid):
+def jobs(ids=None):
     """
-    Find job based on its jobid.
-    Considerably faster than a call to jobs()
+    Either return all jobs or a set of jobs from SLURM.
     """
-    byteid = str(jobid).encode()
-    return pyslurm_get(pyslurm.job().find_id(byteid))
+    if ids is None:
+        return pyslurm_get(pyslurm.job().get())
+    else:
+        job_dict = {}
+        if not isinstance(ids, list): ids = [ids]
+        for job in ids:
+            try:
+                byteid = str(job).encode()
+                job_dict[int(job)] = pyslurm_get(convert_dict_values(pyslurm.job().find_id(byteid)))
+            except ValueError as e:
+                pass   # job not found, no need to throw a fucking exception
+        return job_dict
 
     
 def config():
