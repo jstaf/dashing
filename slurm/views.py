@@ -58,7 +58,6 @@ def update_jobs():
             'job_state': job['job_state'],
             'user_id': job['user_id'],
             'name': job['name'],
-            'command': job['command'],
             'submit_time': job['submit_time'],
             'start_time': job['start_time'],
             'time_limit': job['time_limit'],
@@ -81,8 +80,7 @@ def update_nodes():
             'cpus': node['cpus'],
             'alloc_cpus': node['alloc_cpus'],
             'real_mem': node['real_memory'],
-            'alloc_mem': node['alloc_mem'],
-            'tmp_disk': node['tmp_disk']}
+            'alloc_mem': node['alloc_mem']}
         new_node, created = Node.objects.update_or_create(
                 hostname=node['name'], defaults=new_vals)
 
