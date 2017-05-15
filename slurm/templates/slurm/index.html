@@ -1,6 +1,7 @@
 {% include 'slurm/base.html' %}
 {% load static %}
 
+{% block body %}
 <div class="container">
   <div class="row">
     <div class="col-md-2">
@@ -22,4 +23,5 @@
   {% endif %}
   <p>{{ nodes_reporting }} of {{ total_nodes }} nodes reporting.</p>
 </div>
+{% endblock %}
 
