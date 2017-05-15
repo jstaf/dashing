@@ -14,7 +14,7 @@ def dynamic_table(queryset):
     
     # table headers
     model_fields = [field.name for field in model._meta.get_fields()]
-    table = '<table class="table table-hover">\n\t<thead>'
+    table = '<table class="table table-striped table-hover">\n\t<thead>'
     for header in model_fields:
         table += '\t\t<th>' + str(header) + '</th>\n'
     table += '\t</thead>\n'
@@ -46,7 +46,7 @@ def dynamic_table_link(queryset, redirect_path):
             # the index of the field that is the primary key for the model
             pk_idx = idx
 
-    table = '<table class="table table-hover" style="cursor: pointer;">\n\t<thead>'
+    table = '<table class="table table-striped table-hover" style="cursor: pointer;">\n\t<thead>'
     for header in model_fields:
         table += '\t\t<th>' + str(header) + '</th>\n'
     table += '\t</thead>\n'
