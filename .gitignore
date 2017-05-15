@@ -2,6 +2,7 @@ __pycache__/
 .snakemake/
 *.tkn
 *.swp
+*.bak
 *.zip
 *~
 db.sqlite3

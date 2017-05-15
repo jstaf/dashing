@@ -1,7 +1,9 @@
 {% include "slurm/base.html" %}
 
+{% block body %}
 <div class=container>
 	<h1>{{page_name}}</h1>
 	{{dynamic_table|safe}}
 </div>
+{% endblock %}
 
