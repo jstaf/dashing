@@ -1,6 +1,6 @@
 dashing
 ==================================
-An admin/stats dashboard for the SLURM Workload Manager
+A very dashing dashboard for [slurm](slurm.schedmd.com)
 
 ## Run development environment
 
@@ -15,4 +15,9 @@ You can view the webapp at `http://localhost:8000/slurm`.
 **Start a SLURM bash session** (requires an active SLURM container): `snakemake shell`
 
 **Run tests** (requires an active SLURM container): `snakemake test`
+
+## Site customization
+
+To customize the dashboard for your site, edit the files in `slurm/templates/slurm/site` and `slurm/static/slurm`. The timezone is changed in `dashing/settings.py`. Have fun!
+
 
