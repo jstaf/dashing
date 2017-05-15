@@ -46,7 +46,7 @@ def dynamic_table_link(queryset, redirect_path):
             # the index of the field that is the primary key for the model
             pk_idx = idx
 
-    table = '<table class="table table-hover">\n\t<thead>'
+    table = '<table class="table table-hover" style="cursor: pointer;">\n\t<thead>'
     for header in model_fields:
         table += '\t\t<th>' + str(header) + '</th>\n'
     table += '\t</thead>\n'
@@ -65,10 +65,10 @@ def dynamic_table_link(queryset, redirect_path):
     
 
 def dict_table(some_dict):
-    table = '<table class="table">\n\t<thead>\n\t\t<th>key</th>\n\t\t<th>value</th>\n\t</thead>\n\t<tbody>'
+    table = '<table class="table table-striped">\n\t<thead>\n\t\t<th>key</th>\n\t\t<th>value</th>\n\t</thead>\n\t<tbody>'
     
     for key in sorted(some_dict.keys()):
-        if key == 'batch_script':
+        if key == 'batch_script' and some_dict['batch_script'] is not None:
             some_dict['batch_script'] = re.sub(r'\n', '<br>', some_dict['batch_script'])
         table += '<tr><td>%s</td><td>%s</td></tr>' % (key, some_dict[key])
 
