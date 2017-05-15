@@ -4,6 +4,9 @@ single Django template variable
 """
 
 import re
+import datetime
+
+from django.utils import timezone
 
 def dynamic_table(queryset):
     """
@@ -40,8 +43,11 @@ def dynamic_table_link(queryset, redirect_path):
     
     # table headers
     model_fields = []
+    time_fields = []
     for idx, field in enumerate(model._meta.get_fields()):
         model_fields.append(field.name)
+        if '_time' in field.name:
+            time_fields.append(idx)
         if field.primary_key:
             # the index of the field that is the primary key for the model
             pk_idx = idx
@@ -56,7 +62,9 @@ def dynamic_table_link(queryset, redirect_path):
     table += '\t<tbody>\n'
     for row in model_data:
         table += '\t\t<tr onclick=window.document.location="%s/%s">' % (redirect_path, row[pk_idx])
-        for element in row:
+        for idx, element in enumerate(row):
+            if idx in time_fields:
+                element = convert_time(element)
             table += '<td>%s</td>' % element
         table += '</tr>\n'
     table += '\t</tbody>\n</table>'
@@ -70,9 +78,16 @@ def dict_table(some_dict):
     for key in sorted(some_dict.keys()):
         if key == 'batch_script' and some_dict['batch_script'] is not None:
             some_dict['batch_script'] = re.sub(r'\n', '<br>', some_dict['batch_script'])
+        elif 'time' in key and some_dict[key] is not None:
+            if ':' not in str(some_dict[key]) and float(some_dict[key]) > 1000000:
+                some_dict[key] = convert_time(some_dict[key])
         table += '<tr><td>%s</td><td>%s</td></tr>' % (key, some_dict[key])
 
     table += '\n\t</tbody>\n</table>'
     return table
 
+
+def convert_time(timestamp):
+    time = datetime.datetime.fromtimestamp(float(timestamp), timezone.get_current_timezone())
+    return time.strftime('%Y-%m-%d %H:%M:%S %Z')
 
