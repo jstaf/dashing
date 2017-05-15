@@ -15,7 +15,7 @@ def index(request):
 
 def nodes(request):
     update_nodes()
-    table = dt.dynamic_table(Node.objects.order_by('pk'))
+    table = dt.dynamic_table_link(Node.objects.order_by('pk'), '/slurm/nodes')
 
     return render(request, 'slurm/data-table.html',
             {'page_name': 'Node status', 'dynamic_table': table})
@@ -27,6 +27,16 @@ def jobs(request):
     
     return render(request, 'slurm/data-table.html', 
             {'page_name': 'Job queue', 'dynamic_table': table})
+
+
+def node_page(request, node_id):
+    deets = psapi.nodes(ids = node_id)
+    if len(deets) == 1:
+        table = dt.dict_table(deets[node_id])
+        return render(request, 'slurm/data-table.html',
+                {'page_name': 'Details for node {}'.format(node_id), 'dynamic_table': table})
+    else:
+        raise Http404("The specified node does not exist.")
 
 
 def job_page(request, job_id):

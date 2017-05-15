@@ -71,8 +71,19 @@ def pyslurm_get(expr):
         return {} 
 
 
-def nodes():
-    return pyslurm_get(pyslurm.node().get())
+def nodes(ids=None):
+    """
+    Either return all nodes or a set of nodes from SLURM.
+    """
+    nodes = pyslurm_get(pyslurm.node().get())
+    if ids is None:
+        return nodes
+    else:
+        nodes_dict = {}
+        if not isinstance(ids, list): ids = [ids]
+        for idx in ids:
+            nodes_dict[idx] = nodes[idx]
+        return nodes_dict
 
 
 def jobs(ids=None):
