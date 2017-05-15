@@ -11,7 +11,7 @@ def docker_run(command):
 
 # run docker container
 rule run:
-	input: 	'tokens/docker_image.tkn', 'tokens/init.tkn'
+	input: 	'tokens/docker_image.tkn'
 	shell: 	'docker run -h ernie -p 8000:8000 -v $(pwd):%s -it dashing' % DASHING_LOC
 
 
@@ -36,12 +36,10 @@ rule test:
 # perform any initialization that needs to happen
 rule init:
 	output:	'tokens/init.tkn'
-	shell:
-		'''
-		snakemake migrate
-		python3 manage.py createsuperuser
-		touch {output}		
-		'''
+	run:
+		os.system('snakemake migrate')
+		docker_run('python3 manage.py createsuperuser')
+		os.system('touch %s' % output[0])
 
 # perform db migration
 rule migrate:
