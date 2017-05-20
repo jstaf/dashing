@@ -14,15 +14,12 @@ def index(request):
 
 
 def nodes(request):
-    update_nodes()
     table = dt.dynamic_table_link(Node.objects.order_by('pk'), '/slurm/nodes')
-
     return render(request, 'slurm/data-table.html',
             {'page_name': 'Node status', 'dynamic_table': table})
 
 
 def jobs(request):
-    update_jobs()
     table = dt.dynamic_table_link(Job.objects.order_by('pk'), '/slurm/jobs')
     
     return render(request, 'slurm/data-table.html', 
@@ -48,39 +45,3 @@ def job_page(request, job_id):
                 {'page_name': 'Details for job {}'.format(job_id), 'dynamic_table': table})
     else:
         raise Http404("The specified job does not exist (it also may have completed).")
-
-
-def update_jobs():
-    jobs = psapi.jobs()
-    for job in jobs.values():
-        jobid = job['job_id']
-        new_vals = {
-            'job_state': job['job_state'],
-            'user_id': job['user_id'],
-            'name': job['name'],
-            'submit_time': job['submit_time'],
-            'start_time': job['start_time'],
-            'time_limit': job['time_limit'],
-            'nodes': job['nodes'],
-            'cpus_per_node': job['num_cpus'],
-            'mem_per_node': job['mem_per_node']}
-        Job.objects.update_or_create(job_id=jobid, defaults=new_vals)
-    
-    # delete jobs from db that are no longer picked up by pyslurm
-    Job.objects.exclude(pk__in=jobs.keys()).delete()
-
-
-def update_nodes():
-    """
-    Update node models
-    """
-    for node in psapi.nodes().values():
-        new_vals = {
-            'state': node['state'],                
-            'cpus': node['cpus'],
-            'alloc_cpus': node['alloc_cpus'],
-            'real_mem': node['real_memory'],
-            'alloc_mem': node['alloc_mem']}
-        new_node, created = Node.objects.update_or_create(
-                hostname=node['name'], defaults=new_vals)
-

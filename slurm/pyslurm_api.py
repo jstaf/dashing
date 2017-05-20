@@ -66,7 +66,7 @@ def pyslurm_get(expr):
     A wrapper function to safely handle pyslurm calls in event of controller failure
     """
     try:
-        return(to_unicode(expr))
+        return to_unicode(expr)
     except:
         return {} 
 
