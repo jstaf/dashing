@@ -1,9 +1,11 @@
 __pycache__/
 .snakemake/
+.vscode/
 *.tkn
 *.swp
 *.bak
 *.zip
+*.rdb
 *~
 db.sqlite3
 

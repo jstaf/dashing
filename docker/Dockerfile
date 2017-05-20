@@ -6,8 +6,8 @@ MAINTAINER Jeff Stafford <jeff.stafford@queensu.ca>
 
 # install python3 and django
 RUN yum makecache fast \
-	&& yum -y install python34 python34-pip python34-Cython python34-devel \
-	&& pip3 install django ipython snakemake
+	&& yum -y install python34 python34-pip python34-Cython python34-devel redis
+RUN pip3 install django ipython snakemake celery
 
 # install pyslurm on python 3
 RUN cd ~ \
@@ -20,5 +20,5 @@ EXPOSE 8000/tcp
 
 WORKDIR '/root/dashing'
 
-CMD ["/usr/bin/python3", "/root/dashing/manage.py", "runserver", "0.0.0.0:8000"]
+CMD ["./docker/start-server.sh"]
 
