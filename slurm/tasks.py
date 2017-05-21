@@ -7,13 +7,8 @@ from .models import Job, Node
 
 log = get_task_logger(__name__)
 
-@periodic_task(run_every=(crontab(minute='*')), name="update_slurm_status", ignore_result=True)
-def update_slurm_status():
-    log.info('Updating SLURM db...')
-    update_nodes()
-    update_jobs()
 
-
+@periodic_task(run_every=(crontab(minute='*')), ignore_result=True)
 def update_jobs():
     jobs = psapi.jobs()
     for job in jobs.values():
@@ -34,6 +29,7 @@ def update_jobs():
     Job.objects.exclude(pk__in=jobs.keys()).delete()
 
 
+@periodic_task(run_every=(crontab(minute='*/5')), ignore_result=True)
 def update_nodes():
     """
     Update node models
