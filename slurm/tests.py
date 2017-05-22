@@ -1,9 +1,13 @@
 import os
+import time
 import unittest
+from threading import Thread
 from multiprocessing.pool import Pool
+from multiprocessing import Process
 
 from django.test import TestCase
 from django.test.runner import DiscoverRunner
+import redis
 
 import slurm.pyslurm_api as psapi
 import slurm.tasks as tasks
@@ -11,7 +15,7 @@ import slurm.tasks as tasks
 class ProdDBRunner(DiscoverRunner):
     """
     Runs tests on production database in order to handle locks correctly 
-    and since everything is a docker container anyways
+    (since everything is a docker container anyways).
     """
 
     def setup_databases(self, **kwargs):
@@ -35,16 +39,48 @@ class PyslurmApiTest(TestCase):
         self.assertEqual(psapi.nodes_reporting(), 10)
 
 
+class Locks(unittest.TestCase):
+    # needs to use unittest.Testcase or it somehow does not use the right Redis
+    
+    def thread_sleep(self, text, duration):
+        with tasks.RedisLock('test_lock'):
+            time.sleep(duration)
+            redis.Redis().set('test_value', text)
+
+
+    def test_lock_implementation(self):
+        """Make sure our custom locks with Redis work properly"""
+        t1 = Thread(target=self.thread_sleep, args=('a', 0.5))
+        t2 = Thread(target=self.thread_sleep, args=('b', 0.1))
+        t1.start()
+        time.sleep(0.1)
+        t2.start()
+        t1.join()
+        t2.join()
+        self.assertEqual('b', redis.Redis().get('test_value').decode())
+        
+    
+    def test_lock_implementation2(self):
+        """Same as above, but with processes"""
+        p1 = Process(target=self.thread_sleep, args=('c', 0.5))
+        p2 = Process(target=self.thread_sleep, args=('d', 0.1))
+        p1.start()
+        time.sleep(0.1)
+        p2.start()
+        p1.join()
+        p2.join()
+        self.assertEqual('d', redis.Redis().get('test_value').decode())
+
+
     def test_db_lock_handling(self):
         """
-        Make sure that we can handle conccurent database updates
+        Make sure that we can handle concurrent database updates
         """
-        pool = Pool(processes=10)
+        pool = Pool(processes=4)
         res = []
-        for p in range(10):
+        for p in range(4):
             res.append(pool.apply_async(tasks.update_nodes))
-        print(list(map(lambda x: x.get(), res)))
-        self.assertTrue(all([x.get() for x in res]))
+        self.assertTrue(all([p.get() for p in res]))
 
 
 @unittest.skip
