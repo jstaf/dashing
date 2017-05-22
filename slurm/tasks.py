@@ -1,4 +1,4 @@
-from celery.decorators import periodic_task
+from celery.decorators import periodic_task, task
 from celery.task.schedules import crontab
 from celery.utils.log import get_task_logger
 
@@ -27,6 +27,8 @@ def update_jobs():
     
     # delete jobs from db that are no longer picked up by pyslurm
     Job.objects.exclude(pk__in=jobs.keys()).delete()
+    # for tests
+    return True
 
 
 @periodic_task(run_every=(crontab(minute='*/5')), ignore_result=True)
@@ -41,6 +43,6 @@ def update_nodes():
             'alloc_cpus': node['alloc_cpus'],
             'real_mem': node['real_memory'],
             'alloc_mem': node['alloc_mem']}
-        new_node, created = Node.objects.update_or_create(
-                hostname=node['name'], defaults=new_vals)
+        Node.objects.update_or_create(hostname=node['name'], defaults=new_vals)
+    return True
 
