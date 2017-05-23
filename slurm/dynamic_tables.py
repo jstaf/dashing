@@ -93,6 +93,9 @@ def dict_table(some_dict):
 
 
 def convert_time(timestamp):
-    time = datetime.datetime.fromtimestamp(float(timestamp), timezone.get_current_timezone())
+    if isinstance(timestamp, datetime.datetime):
+        time = timestamp
+    else:
+        time = datetime.datetime.fromtimestamp(float(timestamp), timezone.get_current_timezone())
     return time.strftime('%Y-%m-%d %H:%M:%S %Z')
 
