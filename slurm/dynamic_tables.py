@@ -4,7 +4,7 @@ single Django template variable
 """
 
 import re
-import datetime
+from datetime import datetime
 
 from django.utils import timezone
 
@@ -93,9 +93,9 @@ def dict_table(some_dict):
 
 
 def convert_time(timestamp):
-    if isinstance(timestamp, datetime.datetime):
+    if isinstance(timestamp, datetime):
         time = timestamp
     else:
-        time = datetime.datetime.fromtimestamp(float(timestamp), timezone.get_current_timezone())
+        time = datetime.fromtimestamp(float(timestamp), timezone.get_current_timezone())
     return time.strftime('%Y-%m-%d %H:%M:%S %Z')
 

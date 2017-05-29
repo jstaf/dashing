@@ -1,16 +1,20 @@
 import os
 import time
 import unittest
+from datetime import datetime
 from threading import Thread
 from multiprocessing.pool import Pool
 from multiprocessing import Process
 
 from django.test import TestCase
 from django.test.runner import DiscoverRunner
+from django.utils import timezone
 import redis
 
 import slurm.pyslurm_api as psapi
 import slurm.tasks as tasks
+from slurm.models import Job
+from slurm.dynamic_tables import convert_time
 
 class ProdDBRunner(DiscoverRunner):
     """
@@ -23,6 +27,22 @@ class ProdDBRunner(DiscoverRunner):
 
     def teardown_databases(self, old_config, **kwargs):
         pass
+
+
+class GeneralTests(TestCase):
+
+    def test_convert_time_timezone(self):
+        """Should have same timezone as server, not UTC"""
+        # have at least one job to test with in the db
+        os.system('sbatch test-jobs/sleep5.sh')
+        tasks.update_jobs() 
+
+        # workaround to get server abbrev.
+        test = datetime.fromtimestamp(timezone.now().timestamp(), timezone.get_current_timezone())
+        tz = test.strftime('%Z')
+
+        timestamp = Job.objects.all()[0].submit_time
+        self.assertTrue(tz in convert_time(timestamp))
 
 
 class PyslurmApiTest(TestCase):

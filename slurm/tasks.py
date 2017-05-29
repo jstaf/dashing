@@ -3,13 +3,14 @@ Various functions to be run periodically by celery (like cron).
 """
 
 import time
-import datetime
+from datetime import datetime
 
 from celery.decorators import periodic_task, task
-from celery.task.schedules import crontab
+from celery.schedules import crontab
 from celery.utils.log import get_task_logger
 from django.utils import timezone
 import redis
+import numpy as np
 
 import slurm.pyslurm_api as psapi
 from .models import Job, Node, ClusterSnapshot
@@ -52,8 +53,8 @@ def update_jobs():
                 'job_state': job['job_state'],
                 'user_id': job['user_id'],
                 'name': job['name'],
-                'submit_time': datetime.datetime.fromtimestamp(job['submit_time'], tz),
-                'start_time': datetime.datetime.fromtimestamp(job['start_time'], tz),
+                'submit_time': datetime.fromtimestamp(job['submit_time'], tz),
+                'start_time': datetime.fromtimestamp(job['start_time'], tz),
                 'time_limit': job['time_limit'],
                 'nodes': job['nodes'],
                 'cpus_per_node': job['num_cpus'],
@@ -81,9 +82,29 @@ def update_nodes():
     return True
 
 
+@periodic_task(run_every=(crontab(minute='*/5')), ignore_result=True)
 def cluster_snapshot():
     """Grab periodic stats about cluster"""
+
+    # db queries that would otherwise get reused
+    nodes_up = Node.objects.exclude(state__in=['DOWN', 'UNKNOWN', 'NO_RESPOND', 'POWER_DOWN', 'POWER_UP'])
+    jobs_running = Job.objects.filter(job_state='RUNNING')
+
+    snapshot = ClusterSnapshot(
+        nodes_total=len(Node.objects.all()),
+        nodes_alive=len(nodes_up),
+        nodes_alloc=len(Node.objects.filter(state__in=['ALLOC', 'MIXED'])),
+        jobs_running=len(jobs_running),
+        jobs_pending=len(Job.objects.filter(job_state='PENDING')),
+        jobs_other=len(Job.objects.exclude(job_state__in=['RUNNING', 'PENDING'])),
+        jobs_avg_qtime=np.mean([queue_time(job) for job in jobs_running]),
+        cpus_total=np.sum(nodes_up.values_list('cpus')),
+        cpus_alloc=np.sum(nodes_up.values_list('alloc_cpus'))
+    )
     with RedisLock('db'):
-        snapshot = ClusterSnapshot()
+        snapshot.save()
     return True
 
+
+def queue_time(job):
+    return job.start_time - job.submit_time
