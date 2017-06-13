@@ -5,7 +5,7 @@ Various functions to be run periodically by celery (like cron).
 import time
 from datetime import datetime
 
-from celery.decorators import periodic_task, task
+from celery.task import periodic_task, task
 from celery.schedules import crontab
 from celery.utils.log import get_task_logger
 from django.utils import timezone
