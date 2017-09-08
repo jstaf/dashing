@@ -3,7 +3,7 @@ Various functions to be run periodically by celery (like cron).
 """
 
 import time
-from datetime import datetime
+from datetime import datetime, timedelta
 
 from celery.task import periodic_task, task
 from celery.schedules import crontab
@@ -89,6 +89,12 @@ def cluster_snapshot():
     # db queries that would otherwise get reused
     nodes_up = Node.objects.exclude(state__in=['DOWN', 'UNKNOWN', 'NO_RESPOND', 'POWER_DOWN', 'POWER_UP'])
     jobs_running = Job.objects.filter(job_state='RUNNING')
+    
+    if len(jobs_running) > 0:
+        # numpy complains about taking the mean of 0 items otherwise
+        qtime = np.mean([queue_time(job) for job in jobs_running])
+    else:
+        qtime = timedelta()
 
     snapshot = ClusterSnapshot(
         nodes_total=len(Node.objects.all()),
@@ -97,7 +103,7 @@ def cluster_snapshot():
         jobs_running=len(jobs_running),
         jobs_pending=len(Job.objects.filter(job_state='PENDING')),
         jobs_other=len(Job.objects.exclude(job_state__in=['RUNNING', 'PENDING'])),
-        jobs_avg_qtime=np.mean([queue_time(job) for job in jobs_running]),
+        jobs_avg_qtime=qtime,
         cpus_total=np.sum(nodes_up.values_list('cpus')),
         cpus_alloc=np.sum(nodes_up.values_list('alloc_cpus'))
     )
