@@ -7,7 +7,7 @@ MAINTAINER Jeff Stafford <jeff.stafford@queensu.ca>
 # install python3 and django
 RUN yum makecache fast \
 	&& yum -y install python34 python34-pip python34-Cython python34-devel python34-numpy redis
-RUN pip3 install django ipython snakemake celery redis
+RUN pip3 install django ipython snakemake==3.13.3 celery redis
 
 # install pyslurm on python 3
 RUN cd ~ \
