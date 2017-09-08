@@ -16,6 +16,11 @@ You can view the webapp at `http://localhost:8000/slurm`.
 
 **Run tests** (requires an active SLURM container): `snakemake test`
 
+## First time running
+
+Run `snakemake` to build the Docker container, then `Ctrl-C` once it starts and run `snakemake migrate`.
+You may need to set SELinux in "permissive" mode if it is running in your dev machine.
+
 ## Site customization
 
 To customize the dashboard for your site, edit the files in `slurm/templates/slurm/site` and `slurm/static/slurm`. The timezone is changed in `dashing/settings.py`. Have fun!
