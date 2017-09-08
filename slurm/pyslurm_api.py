@@ -25,24 +25,6 @@ def get_list(data, attr):
 
 def convert_dict_values(dict_values):
     return list(dict_values)[0]
-
-
-def to_unicode(bytes_dict):
-    """
-    Recursively convert a dictionary to unicode
-    """
-    # convert bytes to unicode
-    if isinstance(bytes_dict, bytes):
-        return bytes_dict.decode()
-    # some strings look like unicode, but are garbled strings that need to be fixed
-    elif isinstance(bytes_dict, str) and "b'" in bytes_dict:
-        return re.match(r"b'(\w+)'", bytes_dict).groups()[0]
-    # if a dictionary, recursively call function
-    elif isinstance(bytes_dict, dict):
-        return {to_unicode(k): to_unicode(v) for k, v in bytes_dict.items()}
-    # otherwise leave intact
-    else:
-        return bytes_dict
     
 
 def expand_nodes(node_expr):
@@ -63,11 +45,11 @@ def left_pad(string, digits, char='0'):
 
 def pyslurm_get(expr):
     """
-    A wrapper function to safely handle pyslurm calls in event of controller failure
+    A wrapper function to safely handle pyslurm calls in event of controller failure.
     """
     try:
-        return to_unicode(expr)
-    except:
+        return expr
+    except ValueError:
         return {} 
 
 
@@ -96,11 +78,7 @@ def jobs(ids=None):
         job_dict = {}
         if not isinstance(ids, list): ids = [ids]
         for job in ids:
-            try:
-                byteid = str(job).encode()
-                job_dict[int(job)] = pyslurm_get(convert_dict_values(pyslurm.job().find_id(byteid)))
-            except ValueError as e:
-                pass   # job not found, no need to throw a fucking exception
+            job_dict[int(job)] = pyslurm_get(convert_dict_values(pyslurm.job().find_id(job)))
         return job_dict
 
     
@@ -114,9 +92,9 @@ def partitions():
 
 def has_backup_controller():
     """Is there a secondary slurmctld node?"""
-    config = config()
-    return config['backup_addr'] is not None or \
-            config['backup_controller'] is not None
+    conf = config()
+    return conf['backup_addr'] is not None or \
+            conf['backup_controller'] is not None
 
     
 def ping_controllers():
@@ -153,11 +131,11 @@ def total_nodes():
     return len(nodes())
 
 
-def total_cpus(include_down = False):
-    nodes = nodes()
+def total_cpus(include_down=False):
+    nodelist = nodes()
     if not include_down:
-        nodes = remove_down(nodes)
-    return sum(get_list(nodes, 'cpus'))
+        nodelist = remove_down(nodelist)
+    return sum(get_list(nodelist, 'cpus'))
     
 
 def alloc_cpus():
