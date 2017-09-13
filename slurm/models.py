@@ -37,6 +37,7 @@ class Job(models.Model):
 class ClusterSnapshot(models.Model):
     """Cluster "over-time" statistics"""
     time = models.DateTimeField(auto_now=True, primary_key=True)
+    slurmctld_alive = models.IntegerField(default=0)
     nodes_total = models.IntegerField()
     nodes_alive = models.IntegerField()
     nodes_alloc = models.IntegerField()

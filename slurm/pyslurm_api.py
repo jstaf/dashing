@@ -96,20 +96,27 @@ def has_backup_controller():
     return conf['backup_addr'] is not None or \
             conf['backup_controller'] is not None
 
-    
-def ping_controllers():
-    """Returns True if any slurmctld is alive"""
 
-    # why can't this function just return false if it fails???
+def slurmctld_reporting():
+    """
+    Returns the number of controllers that are alive.
+    """
+    responding = 0
+    # yay duck typing...
+    responding += slurmctld_ping(1)
+    responding += slurmctld_ping(2)
+    return responding
+
+
+def slurmctld_ping(which):
+    """
+    Returns true if the given slurmctld (1 or 2) is alive.
+    """
     try:
-        pyslurm.slurm_ping(1)
+        pyslurm.slurm_ping(which)
         return True
-    except:
-        try:
-            pyslurm.slurm_ping(2)
-            return True
-        except:
-            return False
+    except ValueError:
+        return False
 
 
 def remove_down(nodes):

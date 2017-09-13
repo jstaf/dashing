@@ -2,14 +2,15 @@ from django.shortcuts import render
 from django.http import HttpResponse, Http404
 from django.views import generic
 
-from .models import Node, Job
+from .models import Node, Job, ClusterSnapshot
 import slurm.dynamic_tables as dt
 import slurm.pyslurm_api as psapi
 
 def index(request):
-    context = {'controllers_up': psapi.ping_controllers(),
-            'nodes_reporting': psapi.nodes_reporting(),
-            'total_nodes': psapi.total_nodes()}
+    last_snapshot = ClusterSnapshot.objects.latest('time')
+    context = {'controllers_up': last_snapshot.slurmctld_alive > 0,
+            'nodes_alive': last_snapshot.nodes_alive,
+            'nodes_total': last_snapshot.nodes_total}
     return render(request, 'slurm/index.html', context)
 
 
@@ -27,7 +28,7 @@ def jobs(request):
 
 
 def node_page(request, node_id):
-    deets = psapi.nodes(ids = node_id)
+    deets = psapi.nodes(ids=node_id)
     if len(deets) == 1:
         table = dt.dict_table(deets[node_id])
         return render(request, 'slurm/data-table.html',
@@ -38,7 +39,7 @@ def node_page(request, node_id):
 
 def job_page(request, job_id):
     job_id = int(job_id)
-    deets = psapi.jobs(ids = job_id)
+    deets = psapi.jobs(ids=job_id)
     if len(deets) == 1:
         table = dt.dict_table(deets[job_id])
         return render(request, 'slurm/data-table.html',

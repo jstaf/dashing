@@ -97,6 +97,7 @@ def cluster_snapshot():
         qtime = timedelta()
 
     snapshot = ClusterSnapshot(
+        slurmctld_alive=psapi.slurmctld_reporting(),
         nodes_total=len(Node.objects.all()),
         nodes_alive=len(nodes_up),
         nodes_alloc=len(Node.objects.filter(state__in=['ALLOC', 'MIXED'])),
