@@ -5,6 +5,7 @@ import numpy as np
 
 from .models import Node, Job, ClusterSnapshot
 import slurm.ui.dynamic_tables as dt
+import slurm.ui.pager as pager
 import slurm.pyslurm_api as psapi
 
 page_size = 50
@@ -20,7 +21,9 @@ def index(request):
 def nodes(request, page):
     if page is None:
         page = 0
-    start = page_size * int(page)
+    
+    page = int(page)
+    start = page_size * page
     table = dt.dynamic_table_link(Node.objects.order_by('pk')[start:(start + page_size)], '/slurm/nodes')
     return render(request, 'slurm/data-table.html',
             {'page_name': 'Node status', 'dynamic_table': table})
@@ -29,10 +32,14 @@ def nodes(request, page):
 def jobs(request, page):
     if page is None:
         page = 0
-    start = page_size * int(page)
-    table = dt.dynamic_table_link(Job.objects.order_by('pk')[start:(start + page_size)], '/slurm/jobs')
+
+    page = int(page)    
+    start = page_size * page
+    query = Job.objects.order_by('pk')[start:(start + page_size)]
+    pagination = pager.pager(query, '/slurm/jobs', page, page_size) 
+    table = dt.dynamic_table_link(query, '/slurm/jobs')
     return render(request, 'slurm/data-table.html', 
-            {'page_name': 'Job queue', 'dynamic_table': table})
+            {'page_name': 'Job queue', 'dynamic_table': table, 'pager': pagination})
 
 
 def node_page(request, node_id):
