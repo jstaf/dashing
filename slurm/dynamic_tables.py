@@ -66,7 +66,7 @@ def dynamic_table_link(queryset, redirect_path):
     model_data = queryset.values_list()
     table += '\t<tbody>\n'
     for row in model_data:
-        table += '\t\t<tr onclick=window.document.location="%s/%s">' % (redirect_path, row[pk_idx])
+        table += '\t\t<tr onclick=window.document.location="%s/id/%s">' % (redirect_path, row[pk_idx])
         for idx, element in enumerate(row):
             if idx in time_fields:
                 element = convert_time(element)

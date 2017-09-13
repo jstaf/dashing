@@ -14,15 +14,14 @@ def index(request):
     return render(request, 'slurm/index.html', context)
 
 
-def nodes(request):
+def nodes(request, page=0):
     table = dt.dynamic_table_link(Node.objects.order_by('pk'), '/slurm/nodes')
     return render(request, 'slurm/data-table.html',
             {'page_name': 'Node status', 'dynamic_table': table})
 
 
-def jobs(request):
+def jobs(request, page=0):
     table = dt.dynamic_table_link(Job.objects.order_by('pk'), '/slurm/jobs')
-    
     return render(request, 'slurm/data-table.html', 
             {'page_name': 'Job queue', 'dynamic_table': table})
 
