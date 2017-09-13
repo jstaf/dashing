@@ -1,11 +1,11 @@
 import math
 import numpy as np
 
-def pager(queryset, redirect_path, page=0, page_size=50):
+def pager(redirect_path, n_objects, page=0, page_size=50):
     """
     Create a paging object to allow paging through results.
     """
-    n_pages = math.ceil(len(queryset) / page_size)
+    n_pages = math.ceil(n_objects / page_size)
     if n_pages <= 1:
         # no pager needed
         return ''
@@ -13,7 +13,7 @@ def pager(queryset, redirect_path, page=0, page_size=50):
     prev_page = np.clip(page - 1, 0, n_pages)
     next_page = np.clip(page + 1, 0, n_pages)
 
-    html = '<nav aria-label="{}-pager">\n'.format(queryset.model._meta.label)
+    html = '<nav aria-label="model-pager">\n'
     html += '\t<ul class="pagination">\n'
     html += '\t\t<li class="page-item"><a class="page-link" href="{}/{}">Previous</a></li>'.format(redirect_path, prev_page)
     # generate pager links
