@@ -4,7 +4,7 @@ from django.views import generic
 import numpy as np
 
 from .models import Node, Job, ClusterSnapshot
-import slurm.dynamic_tables as dt
+import slurm.ui.dynamic_tables as dt
 import slurm.pyslurm_api as psapi
 
 page_size = 50
