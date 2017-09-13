@@ -2322,7 +2322,7 @@ th {
   border-bottom-width: 2px;
 }
 .table-striped > tbody > tr:nth-of-type(odd) {
-  background-color: #f8f5f0;
+  background-color: hsl(40, 20%, 97.5%);
 }
 .table-hover > tbody > tr:hover {
   background-color: #f8f5f0;
