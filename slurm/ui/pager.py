@@ -6,7 +6,7 @@ def pager(queryset, redirect_path, page=0, page_size=50):
     Create a paging object to allow paging through results.
     """
     n_pages = math.ceil(len(queryset) / page_size)
-    if n_pages == 1:
+    if n_pages <= 1:
         # no pager needed
         return ''
 
