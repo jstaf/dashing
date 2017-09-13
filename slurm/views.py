@@ -24,9 +24,11 @@ def nodes(request, page):
     
     page = int(page)
     start = page_size * page
-    table = dt.dynamic_table_link(Node.objects.order_by('pk')[start:(start + page_size)], '/slurm/nodes')
+    query = Node.objects.order_by('pk')[start:(start + page_size)]
+    pagination = pager.pager(query, '/slurm/jobs', page, page_size)
+    table = dt.dynamic_table_link(query, '/slurm/nodes')
     return render(request, 'slurm/data-table.html',
-            {'page_name': 'Node status', 'dynamic_table': table})
+            {'page_name': 'Node status', 'dynamic_table': table, 'pager': pagination})
 
 
 def jobs(request, page):
