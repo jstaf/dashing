@@ -9,6 +9,7 @@ from celery.task import periodic_task, task
 from celery.schedules import crontab
 from celery.utils.log import get_task_logger
 from django.utils import timezone
+from django.db import transaction
 import redis
 import numpy as np
 
@@ -49,19 +50,20 @@ def update_jobs():
     Job.objects.exclude(pk__in=jobs.keys()).delete()
     tz = timezone.get_current_timezone()
     with RedisLock('db'):
-        for job in jobs.values():
-            jobid = job['job_id']
-            new_vals = {
-                'job_state': job['job_state'],
-                'user_id': job['user_id'],
-                'name': job['name'],
-                'submit_time': datetime.fromtimestamp(job['submit_time'], tz),
-                'start_time': datetime.fromtimestamp(job['start_time'], tz),
-                'time_limit': job['time_limit'],
-                'nodes': job['nodes'],
-                'cpus_per_node': job['num_cpus'],
-                'mem_per_node': job['mem_per_node']}
-            Job.objects.update_or_create(job_id=jobid, defaults=new_vals)
+        with transaction.atomic():
+            for job in jobs.values():
+                jobid = job['job_id']
+                new_vals = {
+                    'job_state': job['job_state'],
+                    'user_id': job['user_id'],
+                    'name': job['name'],
+                    'submit_time': datetime.fromtimestamp(job['submit_time'], tz),
+                    'start_time': datetime.fromtimestamp(job['start_time'], tz),
+                    'time_limit': job['time_limit'],
+                    'nodes': job['nodes'],
+                    'cpus_per_node': job['num_cpus'],
+                    'mem_per_node': job['mem_per_node']}
+                Job.objects.update_or_create(job_id=jobid, defaults=new_vals)
     return True
 
 
@@ -71,14 +73,15 @@ def update_nodes():
     Update node models
     """
     with RedisLock('db'):
-        for node in psapi.nodes().values():
-            new_vals = {
-                'state': node['state'],                
-                'cpus': node['cpus'],
-                'alloc_cpus': node['alloc_cpus'],
-                'real_mem': node['real_memory'],
-                'alloc_mem': node['alloc_mem']}
-            Node.objects.update_or_create(hostname=node['name'], defaults=new_vals)
+        with transaction.atomic():
+            for node in psapi.nodes().values():
+                new_vals = {
+                    'state': node['state'],                
+                    'cpus': node['cpus'],
+                    'alloc_cpus': node['alloc_cpus'],
+                    'real_mem': node['real_memory'],
+                    'alloc_mem': node['alloc_mem']}
+                Node.objects.update_or_create(hostname=node['name'], defaults=new_vals)
     return True
 
 
