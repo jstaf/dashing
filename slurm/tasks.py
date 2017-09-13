@@ -45,6 +45,8 @@ class RedisLock():
 @periodic_task(run_every=(crontab(minute='*')), ignore_result=True)
 def update_jobs():
     jobs = psapi.jobs()
+    # delete all jobs from db that are no longer picked up by pyslurm
+    Job.objects.exclude(pk__in=jobs.keys()).delete()
     tz = timezone.get_current_timezone()
     with RedisLock('db'):
         for job in jobs.values():
@@ -60,8 +62,6 @@ def update_jobs():
                 'cpus_per_node': job['num_cpus'],
                 'mem_per_node': job['mem_per_node']}
             Job.objects.update_or_create(job_id=jobid, defaults=new_vals)
-            # delete jobs from db that are no longer picked up by pyslurm
-            Job.objects.exclude(pk__in=jobs.keys()).delete()
     return True
 
 
