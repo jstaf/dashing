@@ -6,15 +6,18 @@ import numpy as np
 from .models import Node, Job, ClusterSnapshot
 import slurm.ui.dynamic_tables as dt
 import slurm.ui.pager as pager
+import slurm.ui.plots as plots
 import slurm.pyslurm_api as psapi
 
 page_size = 50
 
 def index(request):
     last_snapshot = ClusterSnapshot.objects.latest('time')
-    context = {'controllers_up': last_snapshot.slurmctld_alive > 0,
-            'nodes_alive': last_snapshot.nodes_alive,
-            'nodes_total': last_snapshot.nodes_total}
+    context = {
+        'controllers_up': last_snapshot.slurmctld_alive > 0,
+        'nodes': plots.nodes_status(),
+        'jobs': plots.jobs_status()
+    }
     return render(request, 'slurm/index.html', context)
 
 

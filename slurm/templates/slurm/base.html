@@ -44,12 +44,15 @@
       </div>
     </nav>
     </br></br></br></br>
+  
+    <!-- jQuery (necessary for Bootstrap's JavaScript plugins) -->
+  	<script src="{% static 'jquery/jquery-3.2.1.min.js' %}"></script>
+    <!-- Include all compiled plugins (below), or include individual files as needed -->
+  	<script src="{% static 'bootstrap/js/bootstrap.min.js' %}"></script>
+    <!-- include highcharts -->
+    <script src="{% static 'highcharts/highcharts.js' %}"></script>
 
     {% block body %}{% endblock %}
 
-	<!-- jQuery (necessary for Bootstrap's JavaScript plugins) -->
-	<script src="{% static 'jquery/jquery-3.2.1.min.js' %}"></script>
-    <!-- Include all compiled plugins (below), or include individual files as needed -->
-	<script src="{% static 'bootstrap/js/bootstrap.min.js' %}"></script>
   </body>
 </html>

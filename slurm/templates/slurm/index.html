@@ -3,27 +3,24 @@
 
 {% block body %}
 <div class="container">
-  <div class="row">
-    <div class="col-md-2">
-		<img src="{% static 'slurm/slurm_logo.png' %}" alt="SLURM logo" height=150px>
+    <div class="row">
+        <div class="col-md-2">
+            <img src="{% static 'slurm/slurm_logo.png' %}" alt="SLURM logo" height=150px>
+        </div>
+        <div class="col-md-10">
+            <div class="page-header">
+                <h1>SLURM</h1>
+                <p class="lead">Status and online services</p>
+            </div>
+        </div>
     </div>
-    <div class="col-md-10">
-      <div class="page-header">
-         <h1>SLURM</h1>
-         <p class="lead">Status and online services</p>
-      </div>
-    </div>
-  </div>
-
-  {% include 'slurm/site/site-description.html' %}
-
-  <h3>System status</h3>
-  {% if controllers_up %}
-  <b><p>Controller Status -- UP</p></b>
-  {% else %}
-  <b><p>Controller Status -- DOWN</p></b>
-  {% endif %}
-  <p>{{ nodes_alive }} of {{ nodes_total }} nodes reporting.</p>
+    
+    {% include 'slurm/site/site-description.html' %}
+    
+    <h3>System status</h3>
+    
+    {{ nodes | safe }}
+    {{ jobs | safe }}
 </div>
 {% endblock %}
 

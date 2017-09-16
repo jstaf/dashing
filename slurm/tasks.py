@@ -103,7 +103,7 @@ def cluster_snapshot():
         slurmctld_alive=psapi.slurmctld_reporting(),
         nodes_total=len(Node.objects.all()),
         nodes_alive=len(nodes_up),
-        nodes_alloc=len(Node.objects.filter(state__in=['ALLOC', 'MIXED'])),
+        nodes_alloc=len(Node.objects.filter(state__in=['ALLOCATED', 'MIXED'])),
         jobs_running=len(jobs_running),
         jobs_pending=len(Job.objects.filter(job_state='PENDING')),
         jobs_other=len(Job.objects.exclude(job_state__in=['RUNNING', 'PENDING'])),
