@@ -53,7 +53,9 @@
     <script type="text/javascript">
     function doSearch() {
       var search_string = document.getElementById("search_string").value;
-      location = '/slurm/search/?str=' + search_string;
+      if (search_string.length > 0) {
+        location = '/slurm/search/' + search_string;
+      }
       return false;
     }
     </script>

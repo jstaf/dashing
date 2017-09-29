@@ -64,3 +64,7 @@ def job_page(request, job_id):
                 {'page_name': 'Details for job {}'.format(job_id), 'dynamic_table': table})
     else:
         raise Http404("The specified job does not exist (it also may have completed).")
+
+
+def search(request, search_str):
+    return HttpResponse('You searched for: ' + search_str)
