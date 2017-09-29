@@ -17,10 +17,24 @@
     
     {% include 'slurm/site/site-description.html' %}
     
-    <h3>System status</h3>
+    <h3>System at-a-glance:</h3>
     
-    {{ nodes | safe }}
-    {{ jobs | safe }}
+    <div class="row">
+        <div class="col-md-2">
+            <p><b>Controller status: </b>placeholder</p>
+            <p><b>Controller uptime: </b>placeholder</p>
+            <p><b>Total jobs: </b>placeholder</p>
+            <p><b>Cluster load: </b>placeholder</p>
+            <p><b>Average queue time: </b>placeholder</p>
+        </div>
+        {{ nodes | safe }}
+        {{ jobs | safe }}
+    </div>
+
+    <hr>
+    <footer>
+        <p><a href="https://github.com/jstaf/dashing">https://github.com/jstaf/dashing</a> - 2017</p>
+    </footer>
 </div>
 {% endblock %}
 

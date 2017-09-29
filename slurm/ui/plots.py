@@ -21,13 +21,12 @@ def nodes_status():
     return highchart(
         'line', 
         data_series={
-            'Total Nodes': dump_field(ClusterSnapshot.objects, 'nodes_total'), 
-            'Nodes Alive': dump_field(ClusterSnapshot.objects, 'nodes_alive'),
+            'Nodes Reporting': dump_field(ClusterSnapshot.objects, 'nodes_alive'),
             'Nodes Allocated': dump_field(ClusterSnapshot.objects, 'nodes_alloc')
         }, 
         title='Node status',
         style='height:400px;',
-        class_id='col-md-6',
+        class_id='col-md-5',
         div_name='test-nodes',
         xAxis={'title': {'text': 'date'}}
     )
@@ -43,7 +42,7 @@ def jobs_status():
         }, 
         title='Job queue',
         style='height:400px;',
-        class_id='col-md-6',
+        class_id='col-md-5',
         div_name='test-jobs',
         xAxis={'title': {'text': 'date'}}
     )
