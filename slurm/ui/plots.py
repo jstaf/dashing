@@ -41,7 +41,7 @@ def jobs_status():
             'Jobs pending': dump_field(ClusterSnapshot.objects, 'jobs_pending'),
             'Other jobs': dump_field(ClusterSnapshot.objects, 'jobs_other')
         }, 
-        title='Job status',
+        title='Job queue',
         style='height:400px;',
         class_id='col-md-6',
         div_name='test-jobs',
@@ -62,10 +62,11 @@ def highchart(chart_type, data_series, title=None,
         'yAxis': {'title': {'text': None}},
         'series': []
     }
-    for name, data in data_series.items():
+
+    for name in sorted(data_series.keys()):
         chart_data['series'].append({
             'name': name,
-            'data': data
+            'data': data_series[name]
         })
     
     for k, v in kwargs.items():

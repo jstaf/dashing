@@ -18,6 +18,16 @@ from .models import Job, Node, ClusterSnapshot
 
 log = get_task_logger(__name__)
 
+
+def batch_delete(queryset):
+    """
+    To avoid Django's "too many SQL variables" error.
+    """
+    batch_size = 500
+    while len(queryset) > 0:
+        queryset[:batch_size].delete()
+
+
 class RedisLock():
     """Because the redlock algorithm sucks"""
 
@@ -46,8 +56,9 @@ class RedisLock():
 @periodic_task(run_every=(crontab(minute='*')), ignore_result=True)
 def update_jobs():
     jobs = psapi.jobs()
-    # delete all jobs from db that are no longer picked up by pyslurm
-    Job.objects.exclude(pk__in=jobs.keys()).delete()
+    # delete all jobs from db that are no longer active
+    # TODO: add to job archive for later review by users
+    Job.objects.exclude(job_state__in=['PENDING', 'RUNNING', 'SUSPENDED', 'COMPLETING', 'CONFIGURING']).delete()
     tz = timezone.get_current_timezone()
     with RedisLock('db'):
         with transaction.atomic():
@@ -67,7 +78,7 @@ def update_jobs():
     return True
 
 
-@periodic_task(run_every=(crontab(minute='*/5')), ignore_result=True)
+@periodic_task(run_every=(crontab(minute='*')), ignore_result=True)
 def update_nodes():
     """
     Update node models
@@ -101,7 +112,7 @@ def cluster_snapshot():
 
     snapshot = ClusterSnapshot(
         slurmctld_alive=psapi.slurmctld_reporting(),
-        nodes_total=len(Node.objects.all()),
+        nodes_total=Node.objects.count(),
         nodes_alive=len(nodes_up),
         nodes_alloc=len(Node.objects.filter(state__in=['ALLOCATED', 'MIXED'])),
         jobs_running=len(jobs_running),
