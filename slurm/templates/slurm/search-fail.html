@@ -1,0 +1,18 @@
+{% extends 'slurm/base.html' %}
+{% load static %}
+
+{% block body %}
+<h1>No results found :(</h1>
+<hr>
+<p><b>There were no jobs or nodes that matched the query: {{ search_str }}</b><p>
+<p>Some hints:</p>
+<ul>
+    <li>You can search by job/node ids, states, and usernames.</li>
+    <li>To refine a query, you can enter multiple terms
+        ("username PENDING" would find all jobs submitted by 
+        "username" with state "PENDING").
+    </li>
+    <li>Searches are case-sensitive.</li>
+    <li>You can search for jobs or nodes, but not both. You're not interested in both, are you?</li>
+</ul>
+{% endblock %}

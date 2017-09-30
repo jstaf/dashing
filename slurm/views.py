@@ -1,4 +1,4 @@
-from django.shortcuts import render
+from django.shortcuts import render, redirect
 from django.http import HttpResponse, Http404
 from django.views import generic
 import numpy as np
@@ -67,4 +67,14 @@ def job_page(request, job_id):
 
 
 def search(request, search_str):
-    return HttpResponse('You searched for: ' + search_str)
+    # check if search string matches either a node name or job id. 
+    # if so, just redirect to that page
+    if search_str in [x[0] for x in Node.objects.values_list('hostname')]:
+        return redirect('/slurm/nodes/id/{}'.format(search_str))
+    elif int(search_str) in [x[0] for x in Job.objects.values_list('job_id')]:
+        return redirect('/slurm/jobs/id/{}'.format(search_str))
+
+    # check if search string matches a set of nodes or jobs,
+    # if so, display that queryset.    
+
+    return render(request, 'slurm/search-fail.html', {'search_str': search_str})
