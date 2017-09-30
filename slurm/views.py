@@ -77,9 +77,15 @@ def job_page(request, job_id):
 def search(request, search_str):
     # check if search string matches either a node name or job id. 
     # if so, just redirect to that page
+    try:
+        jobid = int(search_str)
+        can_coerce = True
+    except ValueError:
+        can_coerce = False
+
     if search_str in [x[0] for x in Node.objects.values_list('hostname')]:
         return redirect('/slurm/nodes/id/{}'.format(search_str))
-    elif int(search_str) in [x[0] for x in Job.objects.values_list('job_id')]:
+    elif can_coerce and jobid in [x[0] for x in Job.objects.values_list('job_id')]:
         return redirect('/slurm/jobs/id/{}'.format(search_str))
 
     # check if search string matches a set of nodes or jobs,
