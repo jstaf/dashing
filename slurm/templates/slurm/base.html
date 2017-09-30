@@ -2,26 +2,26 @@
 {% load static %}
 
 <html>
-  <head>
+<head>
 	<meta charset="utf-8">
-    <meta http-equiv="X-UA-Compatible" content="IE=edge">
-    <meta name="viewport" content="width=device-width, initial-scale=1">
-    <!-- The above 3 meta tags *must* come first in the head; any other head content must come *after* these tags -->
-    <title>SLURM Dashboard</title>
-
-    <!-- Bootstrap -->
+  <meta http-equiv="X-UA-Compatible" content="IE=edge">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <!-- The above 3 meta tags *must* come first in the head; any other head content must come *after* these tags -->
+  <title>SLURM Dashboard</title>
+  
+  <!-- Bootstrap -->
 	<link href="{% static 'bootstrap/css/bootstrap.css' %}" rel="stylesheet">
-
-    <!-- HTML5 shim and Respond.js for IE8 support of HTML5 elements and media queries -->
-    <!-- WARNING: Respond.js doesn't work if you view the page via file:// -->
-    <!--[if lt IE 9]>
-      <script src="https://oss.maxcdn.com/html5shiv/3.7.3/html5shiv.min.js"></script>
-      <script src="https://oss.maxcdn.com/respond/1.4.2/respond.min.js"></script>
+  
+  <!-- HTML5 shim and Respond.js for IE8 support of HTML5 elements and media queries -->
+  <!-- WARNING: Respond.js doesn't work if you view the page via file:// -->
+  <!--[if lt IE 9]>
+    <script src="https://oss.maxcdn.com/html5shiv/3.7.3/html5shiv.min.js"></script>
+    <script src="https://oss.maxcdn.com/respond/1.4.2/respond.min.js"></script>
     <![endif]-->
-
-	<link href="{% static 'slurm/favicon.png' %}" rel="shortcut icon">
+    
+    <link href="{% static 'slurm/favicon.png' %}" rel="shortcut icon">
   </head>
-
+  
   <body>
     <nav class="navbar navbar-default navbar-fixed-top">
       <div class="container">
@@ -36,7 +36,7 @@
         </div>
         <div id="navbar" class="navbar-collapse collapse">
           <ul class="nav navbar-nav">
-    		    <li><a href="/slurm/nodes">Nodes</a></li>
+            <li><a href="/slurm/nodes">Nodes</a></li>
             <li><a href="/slurm/jobs">Jobs</a></li>
           </ul>
           <form class="navbar-form navbar-left" role="search" onsubmit="return doSearch();">
@@ -44,13 +44,13 @@
               <input id="search_string" class="form-control" placeholder="Search for jobs/nodes..." type="text">
             </div>
           </form>
-		  {% include 'slurm/site/navbar-links.html' %}
+          {% include 'slurm/site/navbar-links.html' %}
         </div><!--/.nav-collapse -->
       </div>
     </nav>
-    </br></br></br></br>
-
-    <script type="text/javascript">
+  </br></br></br></br>
+  
+  <script type="text/javascript">
     function doSearch() {
       var search_string = document.getElementById("search_string").value;
       if (search_string.length > 0) {
@@ -58,16 +58,26 @@
       }
       return false;
     }
-    </script>
+  </script>
   
-    <!-- jQuery (necessary for Bootstrap's JavaScript plugins) -->
-  	<script src="{% static 'jquery/jquery-3.2.1.min.js' %}"></script>
-    <!-- Include all compiled plugins (below), or include individual files as needed -->
-  	<script src="{% static 'bootstrap/js/bootstrap.min.js' %}"></script>
-    <!-- include highcharts -->
-    <script src="{% static 'highcharts/highcharts.js' %}"></script>
-
+  <!-- jQuery (necessary for Bootstrap's JavaScript plugins) -->
+  <script src="{% static 'jquery/jquery-3.2.1.min.js' %}"></script>
+  <!-- Include all compiled plugins (below), or include individual files as needed -->
+  <script src="{% static 'bootstrap/js/bootstrap.min.js' %}"></script>
+  <!-- include highcharts -->
+  <script src="{% static 'highcharts/highcharts.js' %}"></script>
+  
+  <div class="container">
     {% block body %}{% endblock %}
+  </div>
+</body>
 
-  </body>
+<footer style="width:100%;">
+  <div class="container">
+    <hr>
+    <p class="text-muted" style="text-align:right">
+      &copyJeff Stafford / 2017 / <a href="https://github.com/jstaf/dashing">GitHub</a>
+    </p>
+  </div>
+</footer>
 </html>

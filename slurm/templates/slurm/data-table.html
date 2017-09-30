@@ -1,10 +1,8 @@
 {% extends "slurm/base.html" %}
 
 {% block body %}
-<div class=container>
-	<h1>{{page_name}}</h1>
-	{{dynamic_table|safe}}
-	{{pager|safe}}
-</div>
+<h1>{{page_name}}</h1>
+{{dynamic_table|safe}}
+{{pager|safe}}
 {% endblock %}
 
