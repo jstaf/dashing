@@ -9,6 +9,20 @@ import re
 import pyslurm
 
 
+def pyslurm_safe(expr):
+    """
+    A decorator function to safely interact with the pyslurm API.
+    (pyslurm returns a ValueError for *everything*).
+    """
+    def _wrapper(*args, **kwargs):
+        try:
+            return expr(*args, **kwargs)
+        except ValueError:
+            return {} 
+    
+    return _wrapper
+
+
 def get_dict(data, attr):
     """
     Get all of a specific key from a dictionary of dictionaries
@@ -43,21 +57,12 @@ def left_pad(string, digits, char='0'):
     return char * (digits - len(string)) + string
 
 
-def pyslurm_get(expr):
-    """
-    A wrapper function to safely handle pyslurm calls in event of controller failure.
-    """
-    try:
-        return expr
-    except ValueError:
-        return {} 
-
-
+@pyslurm_safe
 def nodes(ids=None):
     """
     Either return all nodes or a set of nodes from SLURM.
     """
-    nodes = pyslurm_get(pyslurm.node().get())
+    nodes = pyslurm.node().get()
     if ids is None:
         return nodes
     else:
@@ -68,26 +73,29 @@ def nodes(ids=None):
         return nodes_dict
 
 
+@pyslurm_safe
 def jobs(ids=None):
     """
     Either return all jobs or a set of jobs from SLURM.
     """
     if ids is None:
-        return pyslurm_get(pyslurm.job().get())
+        return pyslurm.job().get()
     else:
         job_dict = {}
         if not isinstance(ids, list): ids = [ids]
         for job in ids:
-            job_dict[int(job)] = pyslurm_get(convert_dict_values(pyslurm.job().find_id(job)))
+            job_dict[int(job)] = convert_dict_values(pyslurm.job().find_id(job))
         return job_dict
 
-    
+
+@pyslurm_safe    
 def config():
-    return pyslurm_get(pyslurm.config().get())
+    return pyslurm.config().get()
 
 
+@pyslurm_safe
 def partitions():
-    return pyslurm_get(pyslurm.partition().get())
+    return pyslurm.partition().get()
 
 
 def has_backup_controller():
@@ -151,5 +159,3 @@ def alloc_cpus():
 
 def total_jobs():
     return len(jobs())
-
-
