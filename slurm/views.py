@@ -12,9 +12,17 @@ import slurm.pyslurm_api as psapi
 page_size = 50
 
 def index(request):
-    last_snapshot = ClusterSnapshot.objects.latest('time')
+    cs = ClusterSnapshot.objects.latest('time')
     context = {
-        'controllers_up': last_snapshot.slurmctld_alive > 0,
+        'status': {
+            'slurmctld_up': cs.slurmctld_alive > 0,
+            'avg_qtime': cs.jobs_avg_qtime,
+            'jobs_total': cs.jobs_running + cs.jobs_pending + cs.jobs_other,
+            'cluster_load': '{}/{} ({:.1f}%)'.format(
+                cs.cpus_alloc,
+                cs.cpus_total, 
+                cs.cpus_alloc / cs.cpus_total * 100)
+        },
         'nodes': plots.nodes_status(),
         'jobs': plots.jobs_status()
     }

@@ -20,11 +20,10 @@
 
 <div class="row">
     <div class="col-md-2">
-        <p><b>Controller status: </b>placeholder</p>
-        <p><b>Controller uptime: </b>placeholder</p>
-        <p><b>Total jobs: </b>placeholder</p>
-        <p><b>Cluster load: </b>placeholder</p>
-        <p><b>Average queue time: </b>placeholder</p>
+        <p><b>Controllers alive: </b><br>{{ status.slurmctld_up }}</p>
+        <p><b>Total jobs: </b><br>{{ status.jobs_total }}</p>
+        <p><b>Cluster load: </b><br>{{ status.cluster_load }}</p>
+        <p><b>Average queue time: </b><br>{{ status.avg_qtime }}</p>
     </div>
     {{ nodes | safe }}
     {{ jobs | safe }}
