@@ -2,6 +2,9 @@ dashing
 ==================================
 A very dashing dashboard for [slurm](slurm.schedmd.com)
 
+Note: this package is currently under development. 
+This readme will be updated with actual deployment instructions once it's ready for use.
+
 ## Run development environment
 
 This project requires Docker to run the `pyslurm` api and simulate an active SLURM cluster when developing.
